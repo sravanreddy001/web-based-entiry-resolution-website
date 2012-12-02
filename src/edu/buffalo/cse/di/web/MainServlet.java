@@ -66,10 +66,15 @@ public class MainServlet extends HttpServlet {
 			obj.put("cluster-"+(j+1), array);
 			values = values.append(value.toString());
 		}
-		System.out.println(obj.toString());
+		//System.out.println(obj.toString());
 		System.out.println("--------------");
-		System.out.println(values);
+		//System.out.println(values);
 		response.getWriter().write(obj.toString());
+	}
+	
+	public String getSampleJson() {
+		String sample = "{\"cluster-1\": [\"item1\",\"item2\"],\"cluster-2\": [\"item3\",\"item4\"],\"cluster-3\": [\"item1\",\"item2\"]}";
+		return sample;
 	}
 
 	/**

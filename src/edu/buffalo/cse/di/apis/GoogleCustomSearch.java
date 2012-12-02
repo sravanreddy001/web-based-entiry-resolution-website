@@ -107,9 +107,11 @@ public class GoogleCustomSearch extends GoogleSearch {
         }
         else {
             try {
-                ObjectInputStream objInputStream = new ObjectInputStream(inputStream);
+            	System.out.print("--> ");
+                ObjectInputStream objInputStream = new ObjectInputStream(new FileInputStream("productSearch/"+fileName));
                 String returnValue = (String)objInputStream.readObject();
                 objInputStream.close();
+                System.out.println(fileName);
                 return returnValue;
             } catch (FileNotFoundException e) {
                 // TODO Add LOG statement here.

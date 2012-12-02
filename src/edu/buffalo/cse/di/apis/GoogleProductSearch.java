@@ -203,10 +203,10 @@ public class GoogleProductSearch extends GoogleSearch {
         List<List<Node>> mergedClusters = getMergedClusters(clusters,0.0);
 
         System.out.println("Step 2: Merged Clusters: " + mergedClusters.size());
-        for(List<Node> cluster: mergedClusters) {
+        /*for(List<Node> cluster: mergedClusters) {
             System.out.println(cluster);
             //System.out.println(SimilarityScore.getBestNodeForCluster(cluster));
-        }
+        }*/
 
         //Step 2:
         /*List<Node> headerNodes = new ArrayList<Node>();
