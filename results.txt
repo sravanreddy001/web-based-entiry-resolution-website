@@ -1,0 +1,25 @@
+#### KNNAlgorithm algorithm = new KNNAlgorithm(nodes, 5, 0.4);
+return 0.3 * titleDistance + 0.3 * urlsDistance + 0.4 * searchStringDistance;
+248
+31
+(Total Nodes, Correct Classified = (248, 122)
+
+
+return 0.4 * titleDistance + 0.2 * urlsDistance + 0.4 * searchStringDistance;
+248
+94
+(Total Nodes, Correct Classified = (248, 214)
+
+
+return 0.4 * titleDistance + 0.3 * urlsDistance + 0.3 * searchStringDistance;
+248
+38
+(Total Nodes, Correct Classified = (248, 124)
+
+
+#### KNNAlgorithm algorithm = new KNNAlgorithm(nodes, 5, 0.35);
+return 0.4 * titleDistance + 0.2 * urlsDistance + 0.4 * searchStringDistance;
+248
+56
+(Total Nodes, Correct Classified = (248, 169)
+
