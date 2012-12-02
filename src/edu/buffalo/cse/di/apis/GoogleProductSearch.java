@@ -127,6 +127,7 @@ public class GoogleProductSearch extends GoogleSearch {
     public static Node getNodesForProductSearch(GoogleProductSearchResult request ) {
 
         List<GoogleCustomSearchResult> list = GoogleCustomSearch.getItemNames(request.getTitle());
+        //System.out.println("Hello");
         if(list != null) { // Happened for one String.
             List<String> titles = new ArrayList<String>(list.size());
             List<String> urls = new ArrayList<String>(list.size());
@@ -188,7 +189,7 @@ public class GoogleProductSearch extends GoogleSearch {
         List<Node> nodes = new ArrayList<Node>();
         for(GoogleProductSearchResult item: data) {
             // TODO use "Modified" if required for calculation of classification rate.
-            Node node = getNodesForProductSearch(item); 
+            Node node = getNodesForProductSearch(item);
             if(node != null) {
                 nodes.add(node);
             }
@@ -288,6 +289,16 @@ public class GoogleProductSearch extends GoogleSearch {
         //testData(Arrays.asList(ignoreList));
     }
 
+    
+    public static List<List<Node>> performEntityResolution(List<String> entities) throws IOException {
+        List<String> productTitles = new ArrayList<String>();
+        for(String entity : entities) {
+            if(!entity.equals("")) {
+                productTitles.add(entity);
+            }
+        }
+        return runAlgorithmforStrings(productTitles);
+    }
 
     public static void actualTest(String fileName) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));

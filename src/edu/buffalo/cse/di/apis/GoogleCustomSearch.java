@@ -45,6 +45,7 @@ public class GoogleCustomSearch extends GoogleSearch {
     	obj = new GoogleCustomSearch();
     }
     private static String googleSearchAPIKey = GoogleAPIKey.getGoogleAPIKey();
+    private static final int MAX_RETRY_ATTEMPS = GoogleAPIKey.getKeyValuePairsCount();
     /**
      * Construct the URL that can query against the google API.
      * @param query
@@ -58,10 +59,11 @@ public class GoogleCustomSearch extends GoogleSearch {
 
     public static String queryGoogleCustomSearch(String query) {
         // TODO Caching the results. Due to google search Limitation.
-        File file = null;
         InputStream inputStream = null;
-        try {
-        	inputStream = obj.getClass().getResourceAsStream("productSearch/" + SecurityUtil.generateSHA1Hash(query));
+        String fileName = null;
+        try { 
+        	fileName = SecurityUtil.generateSHA1Hash(query);
+        	inputStream = obj.getClass().getClassLoader().getResourceAsStream(fileName);
             //file = new File("productSearch/" + SecurityUtil.generateSHA1Hash(query));
         } catch (NoSuchAlgorithmException e2) {
             // TODO Add LOG statement here.
@@ -96,7 +98,8 @@ public class GoogleCustomSearch extends GoogleSearch {
                 e.printStackTrace();
             } catch (IOException e) {
                 // TODO Add LOG statement here.
-                e.printStackTrace();
+                //e.printStackTrace();
+            	System.out.println(query);
             }
             finally {
                 
@@ -123,31 +126,28 @@ public class GoogleCustomSearch extends GoogleSearch {
     }
 
     public static List<GoogleCustomSearchResult> getItemNames(String query) {
-        String content = queryGoogleCustomSearch(query);
-
-        if(content == null) {
-        	return null;
-        }
-        JSONObject obj = (JSONObject) JSONSerializer.toJSON(content);
+        String content = null;
         JSONArray items = null;
-        try {
-            items = obj.getJSONArray("items");
-        }
-        catch(JSONException e) {
-            // On error get another key.
-            googleSearchAPIKey = GoogleAPIKey.getGoogleAPIKey();
-            content = queryGoogleCustomSearch(query);
-
-            obj = (JSONObject) JSONSerializer.toJSON(content);
-            items = null;
+        
+        int retryAttempt = 0;
+        while (retryAttempt < MAX_RETRY_ATTEMPS) {
+        	content = queryGoogleCustomSearch(query);
             try {
+            	JSONObject obj = (JSONObject) JSONSerializer.toJSON(content);
                 items = obj.getJSONArray("items");
+                break;
             }
-            catch(JSONException x) {
-                return null;
+            catch(Exception e) {
+                // On error get another key.
+                googleSearchAPIKey = GoogleAPIKey.getGoogleAPIKey();
+                retryAttempt++;
+                continue;
             }
+        }
+        if(retryAttempt == MAX_RETRY_ATTEMPS) {
             return null;
         }
+        
         List<GoogleCustomSearchResult> itemNames = new ArrayList<GoogleCustomSearchResult>();
         for(int i=0; i<items.size(); i++) {
             JSONObject item = items.getJSONObject(i);

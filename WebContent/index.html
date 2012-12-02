@@ -10,11 +10,14 @@
 	<script>
 		$(document).ready(function(){
 		  $("button").click(function(){
-			  //alert("hi");
-			  var data = $('textarea#entities').val();
-		    $.post("MainServlet",data,function(responseTxt,statusTxt,xhr){
-		      if(statusTxt=="success")
-		        $("textarea#result").val(responseTxt);
+			//alert("hi");
+			var data = $('textarea#entities').val();
+		    $.post("MainServlet", {entities : data},function(responseTxt,statusTxt,xhr){
+		    	if(statusTxt=="success"){
+		    		var json = responseTxt;
+		    		alert(json.length);
+		    	  $("textarea#result").val(responseTxt);
+		      }
 		      if(statusTxt=="error")
 		        alert("Error: "+xhr.status+": "+xhr.statusText);
 		    });
