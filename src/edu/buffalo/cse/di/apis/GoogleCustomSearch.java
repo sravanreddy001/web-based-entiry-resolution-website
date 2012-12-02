@@ -40,6 +40,10 @@ public class GoogleCustomSearch extends GoogleSearch {
     private static final String outputFormat = "&alt=json";
     private static final String customSearchEngineRef = "&cx=001411437529243436513:yxjsvl3ddv4";
 
+    static GoogleCustomSearch obj;
+    static {
+    	obj = new GoogleCustomSearch();
+    }
     private static String googleSearchAPIKey = GoogleAPIKey.getGoogleAPIKey();
     /**
      * Construct the URL that can query against the google API.
@@ -55,15 +59,17 @@ public class GoogleCustomSearch extends GoogleSearch {
     public static String queryGoogleCustomSearch(String query) {
         // TODO Caching the results. Due to google search Limitation.
         File file = null;
+        InputStream inputStream = null;
         try {
-            file = new File("productSearch/" + SecurityUtil.generateSHA1Hash(query));
+        	inputStream = obj.getClass().getResourceAsStream("productSearch/" + SecurityUtil.generateSHA1Hash(query));
+            //file = new File("productSearch/" + SecurityUtil.generateSHA1Hash(query));
         } catch (NoSuchAlgorithmException e2) {
             // TODO Add LOG statement here.
             // TODO algorithm not found.
             e2.printStackTrace();
             return null;
         }
-        if(!file.exists()) {
+        if(inputStream == null) {
             /*try {
                 file.createNewFile();
             } catch (IOException e1) {
@@ -79,10 +85,10 @@ public class GoogleCustomSearch extends GoogleSearch {
                 while ((line = reader.readLine()) != null) {
                     content += line;
                 }
-                ObjectOutputStream outputStream = 
+                /*ObjectOutputStream outputStream = 
                         new ObjectOutputStream(new FileOutputStream(file));
                 outputStream.writeObject(content);
-                outputStream.close();
+                outputStream.close();*/
                 //System.out.println(content);
                 return content;
             } catch (MalformedURLException e) {
@@ -98,9 +104,9 @@ public class GoogleCustomSearch extends GoogleSearch {
         }
         else {
             try {
-                ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file));
-                String returnValue = (String)inputStream.readObject();
-                inputStream.close();
+                ObjectInputStream objInputStream = new ObjectInputStream(inputStream);
+                String returnValue = (String)objInputStream.readObject();
+                objInputStream.close();
                 return returnValue;
             } catch (FileNotFoundException e) {
                 // TODO Add LOG statement here.
@@ -119,6 +125,9 @@ public class GoogleCustomSearch extends GoogleSearch {
     public static List<GoogleCustomSearchResult> getItemNames(String query) {
         String content = queryGoogleCustomSearch(query);
 
+        if(content == null) {
+        	return null;
+        }
         JSONObject obj = (JSONObject) JSONSerializer.toJSON(content);
         JSONArray items = null;
         try {
