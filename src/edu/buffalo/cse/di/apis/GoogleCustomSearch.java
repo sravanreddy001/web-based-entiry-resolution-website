@@ -46,6 +46,9 @@ public class GoogleCustomSearch extends GoogleSearch {
     }
     private static String googleSearchAPIKey = GoogleAPIKey.getGoogleAPIKey();
     private static final int MAX_RETRY_ATTEMPS = GoogleAPIKey.getKeyValuePairsCount();
+    
+    private static final int MAX_RETRY_ATTEMPTS_CAN_OCCUR = 3;
+    public static int maxRetryAttemptsHappened = 0;
     /**
      * Construct the URL that can query against the google API.
      * @param query
@@ -87,10 +90,12 @@ public class GoogleCustomSearch extends GoogleSearch {
                 while ((line = reader.readLine()) != null) {
                     content += line;
                 }
-                /*ObjectOutputStream outputStream = 
-                        new ObjectOutputStream(new FileOutputStream(file));
+                System.out.print("--> ");
+                ObjectOutputStream outputStream = 
+                        new ObjectOutputStream(new FileOutputStream(fileName));
                 outputStream.writeObject(content);
-                outputStream.close();*/
+                outputStream.close();
+                System.out.print(fileName);
                 //System.out.println(content);
                 return content;
             } catch (MalformedURLException e) {
@@ -107,11 +112,9 @@ public class GoogleCustomSearch extends GoogleSearch {
         }
         else {
             try {
-            	System.out.print("--> ");
-                ObjectInputStream objInputStream = new ObjectInputStream(new FileInputStream("productSearch/"+fileName));
+                ObjectInputStream objInputStream = new ObjectInputStream(inputStream);
                 String returnValue = (String)objInputStream.readObject();
                 objInputStream.close();
-                System.out.println(fileName);
                 return returnValue;
             } catch (FileNotFoundException e) {
                 // TODO Add LOG statement here.
@@ -130,13 +133,16 @@ public class GoogleCustomSearch extends GoogleSearch {
     public static List<GoogleCustomSearchResult> getItemNames(String query) {
         String content = null;
         JSONArray items = null;
+        JSONObject obj = null;
+        /*if( maxRetryAttemptsHappened > MAX_RETRY_ATTEMPTS_CAN_OCCUR) {
+        	return null;
+        }*/
         
         int retryAttempt = 0;
         while (retryAttempt < MAX_RETRY_ATTEMPS) {
         	content = queryGoogleCustomSearch(query);
             try {
-            	JSONObject obj = (JSONObject) JSONSerializer.toJSON(content);
-                items = obj.getJSONArray("items");
+            	obj = (JSONObject) JSONSerializer.toJSON(content);
                 break;
             }
             catch(Exception e) {
@@ -147,7 +153,15 @@ public class GoogleCustomSearch extends GoogleSearch {
             }
         }
         if(retryAttempt == MAX_RETRY_ATTEMPS) {
+        	maxRetryAttemptsHappened++;
             return null;
+        }
+        
+        try {
+        	items = obj.getJSONArray("items");
+        }
+        catch(JSONException e) {
+        	return null; // When items is empty.
         }
         
         List<GoogleCustomSearchResult> itemNames = new ArrayList<GoogleCustomSearchResult>();
