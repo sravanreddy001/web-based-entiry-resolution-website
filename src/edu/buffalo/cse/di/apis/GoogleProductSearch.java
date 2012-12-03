@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -185,7 +186,7 @@ public class GoogleProductSearch extends GoogleSearch {
      * @return 
      */
     public static List<List<Node>> runAlgorithm(List<GoogleProductSearchResult> data) {
-
+    	System.out.println("runAlgorithm : " + data.size());
         List<Node> nodes = new ArrayList<Node>();
         for(GoogleProductSearchResult item: data) {
             // TODO use "Modified" if required for calculation of classification rate.
@@ -283,9 +284,9 @@ public class GoogleProductSearch extends GoogleSearch {
 
     public static void main(String[] args) throws IOException {
         //actualTest("MobilePhonesFiltered.txt");
-        actualTestModified("TelevisionDataSet.txt");
+        //actualTestModified("TelevisionDataSet.txt");
         //String[] ignoreListForMobile = new String[] {"case","Charger"};
-        //testData(null);
+        testData(null, "SampleLaptopsList.txt");
         //testData(Arrays.asList(ignoreList));
     }
 
@@ -358,9 +359,9 @@ public class GoogleProductSearch extends GoogleSearch {
         System.out.println("(Total Nodes, Correct Classified = (" + totalRecords + ", " + correctClassified + ")");
     }
 
-    public static void testData(List<String> ignoreList) throws IOException {
+    public static void testData(List<String> ignoreList, String fileName) throws IOException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("SampleTVList.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
         String line = null;
         
         while((line = reader.readLine()) != null) {
@@ -369,8 +370,11 @@ public class GoogleProductSearch extends GoogleSearch {
                 System.out.println(line);
                 System.out.println("---------------------------------------------------------------");
                 List<GoogleProductSearchResult> results = GoogleProductSearch.searchProducts(line, ignoreList);
+                TreeSet<String> set = new TreeSet<String>();
                 for(GoogleProductSearchResult result : results) {
-                    System.out.println(result.getTitle());
+                	if(set.add(result.getTitle().toLowerCase())) {
+                	    System.out.println(result.getTitle());
+                	}
                 }
             }
         }
