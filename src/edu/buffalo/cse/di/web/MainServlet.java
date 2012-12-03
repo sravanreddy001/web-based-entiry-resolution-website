@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import edu.buffalo.cse.di.apis.GoogleCustomSearch;
 import edu.buffalo.cse.di.apis.GoogleProductSearch;
 import edu.buffalo.cse.di.util.entity.Node;
 
@@ -39,13 +40,14 @@ public class MainServlet extends HttpServlet {
 		String input = request.getParameter("entities");
 		List<String> entities = Arrays.asList(input.split("\n"));
 		System.out.println(entities.size());
-		System.out.println(entities);
+		System.out.println("Processing started...");
+		GoogleCustomSearch.maxRetryAttemptsHappened = 0;
 		List<List<Node>> clusters = GoogleProductSearch.performEntityResolution(entities);
 		StringBuilder values = new StringBuilder();
-		
+		System.out.println("Processing ended....");
 		JSONObject obj = new JSONObject();
 		
-		
+		clusters = GoogleProductSearch.getMergedClusters(clusters, 0);
 		
 		System.out.println("");
 		for(int j=0; j< clusters.size(); j++ ) {
@@ -54,6 +56,7 @@ public class MainServlet extends HttpServlet {
 			}
 			JSONArray array = new JSONArray();
 			List<Node> cluster = clusters.get(j);
+			System.out.println(cluster);
 			StringBuilder value = new StringBuilder();
 			for(int i=0; i<cluster.size(); i++) {
 				if(i != 0) {
