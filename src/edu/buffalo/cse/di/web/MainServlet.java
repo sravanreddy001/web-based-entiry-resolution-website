@@ -44,7 +44,7 @@ public class MainServlet extends HttpServlet {
 
 		String jsonData = getClustersAsJson(entities, SimilarityType.JACCARD);
 		System.out.println("==================================================================================");
-		String jsonDataOLD = getClustersAsJson(entities, SimilarityType.CUSTOM);
+		//String jsonDataOLD = getClustersAsJson(entities, SimilarityType.CUSTOM);
 		
 		response.getWriter().write(jsonData);
 	}
@@ -57,7 +57,7 @@ public class MainServlet extends HttpServlet {
 		System.out.println("Processing ended....");
 		JSONObject obj = new JSONObject();
 		
-		clusters = GoogleProductSearch.getMergedClusters(clusters, 0);
+		clusters = GoogleProductSearch.getMergedClusters(clusters, 0, type);
 		
 		System.out.println("");
 		for(int j=0; j< clusters.size(); j++ ) {

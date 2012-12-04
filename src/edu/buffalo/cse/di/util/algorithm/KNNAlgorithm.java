@@ -186,6 +186,7 @@ public class KNNAlgorithm {
                 for(Node node: cluster ) {
                     array[nodes.indexOf(node)] = 1;
                 }
+                System.out.println("cluster size = " +cluster.size());
                 clusters.add(cluster);
             }
         }
@@ -201,8 +202,10 @@ public class KNNAlgorithm {
             if(array[nodes.indexOf(firstNode)] == 1) { // Already added to cluster
                 continue;
             }
-            returnList.add(firstNode);
-            PriorityQueue<NodeDistance> nearNodes = nodeDistances.get(node);
+            if(! returnList.contains(firstNode)) {
+            	returnList.add(firstNode);
+            }
+            PriorityQueue<NodeDistance> nearNodes = nodeDistances.get(firstNode);
             for(int i=0; i<kValue && !nearNodes.isEmpty(); i++) {
                 queue.add(nodes.get(nearNodes.remove().nodeId));
             }

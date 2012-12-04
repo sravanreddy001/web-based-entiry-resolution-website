@@ -197,13 +197,15 @@ public class GoogleProductSearch extends GoogleSearch {
         }
         //Stage 1:
         System.out.println(nodes.size());
-        KNNAlgorithm algorithm = new KNNAlgorithm(nodes, 3, 0.15);
+//TODO IMPORTANT
+        //KNNAlgorithm algorithm = new KNNAlgorithm(nodes, 3, 0.15);
+        KNNAlgorithm algorithm = new KNNAlgorithm(nodes, 2, 0.34);
         List<List<Node>> clusters = algorithm.generateClusters(type);
         System.out.println("Step 1: UnMerged Clusters: " + clusters.size());
 
-        List<List<Node>> mergedClusters = getMergedClusters(clusters,0.0);
+        //List<List<Node>> mergedClusters = getMergedClusters(clusters,0.0);
 
-        System.out.println("Step 2: Merged Clusters: " + mergedClusters.size());
+        //System.out.println("Step 2: Merged Clusters: " + mergedClusters.size());
         /*for(List<Node> cluster: mergedClusters) {
             System.out.println(cluster);
             //System.out.println(SimilarityScore.getBestNodeForCluster(cluster));
@@ -224,7 +226,7 @@ public class GoogleProductSearch extends GoogleSearch {
         return clusters;
     }
 
-    public static List<List<Node>> getMergedClusters(List<List<Node>> clusters, double threshold) {
+    public static List<List<Node>> getMergedClusters(List<List<Node>> clusters, double threshold, SimilarityType type) {
         List<List<Node>> minClusters = new ArrayList<List<Node>>();
         List<List<Node>> maxClusters = new ArrayList<List<Node>>();
         List<Node> unClassifiedCluster = new ArrayList<Node>();
@@ -238,7 +240,7 @@ public class GoogleProductSearch extends GoogleSearch {
         //System.out.println("Get ClusterHeads : ");
         List<Node> headerNodes = new ArrayList<Node>();
         for(List<Node> cluster: maxClusters) {
-            headerNodes.add(SimilarityScore.getBestNodeForCluster(cluster));
+            headerNodes.add(SimilarityScore.getBestNodeForCluster(cluster, type));
         }
 
         //SimilarityScore simScore = new SimilarityScore();

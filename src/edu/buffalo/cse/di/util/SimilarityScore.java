@@ -68,11 +68,11 @@ public class SimilarityScore {
         return ((double)(set1.size() + set2.size() - union.size()))/minSize;
     }
     
-    public static Node getBestNodeForCluster(List<Node> cluster) {
+    public static Node getBestNodeForCluster(List<Node> cluster, SimilarityType type) {
         double[] sumScores = new double[cluster.size()];
         for(int i=0;i < cluster.size(); i++) {
             for(int j=0; (j < cluster.size()) && (i != j); j++) {
-                sumScores[i] += KNNAlgorithm.getDistanceBetweenNodes(cluster.get(i), cluster.get(j), SimilarityType.JACCARD);
+                sumScores[i] += KNNAlgorithm.getDistanceBetweenNodes(cluster.get(i), cluster.get(j), type);
             }
         }
         double topScore = 0.0;
