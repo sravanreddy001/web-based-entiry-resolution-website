@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 
 import edu.buffalo.cse.di.apis.GoogleCustomSearch;
 import edu.buffalo.cse.di.apis.GoogleProductSearch;
+import edu.buffalo.cse.di.util.SimilarityScore.SimilarityType;
 import edu.buffalo.cse.di.util.entity.Node;
 
 /**
@@ -40,9 +41,18 @@ public class MainServlet extends HttpServlet {
 		String input = request.getParameter("entities");
 		List<String> entities = Arrays.asList(input.split("\n"));
 		System.out.println(entities.size());
+
+		String jsonData = getClustersAsJson(entities, SimilarityType.JACCARD);
+		System.out.println("==================================================================================");
+		String jsonDataOLD = getClustersAsJson(entities, SimilarityType.CUSTOM);
+		
+		response.getWriter().write(jsonData);
+	}
+	
+	public String getClustersAsJson(List<String> entities, SimilarityType type) throws IOException {
 		System.out.println("Processing started...");
 		GoogleCustomSearch.maxRetryAttemptsHappened = 0;
-		List<List<Node>> clusters = GoogleProductSearch.performEntityResolution(entities);
+		List<List<Node>> clusters = GoogleProductSearch.performEntityResolution(entities, type);
 		StringBuilder values = new StringBuilder();
 		System.out.println("Processing ended....");
 		JSONObject obj = new JSONObject();
@@ -66,13 +76,15 @@ public class MainServlet extends HttpServlet {
 				value = value.append('"').append(cluster.get(i).toString()).append('"'); 
 			}
 			//values = values.append('"').append(value.toString()).append('"');
-			obj.put("cluster-"+(j+1), array);
-			values = values.append(value.toString());
+			if(cluster.size() > 0) {
+				obj.put("cluster-"+(j+1), array);
+				values = values.append(value.toString());
+			}
 		}
 		//System.out.println(obj.toString());
 		System.out.println("--------------");
 		//System.out.println(values);
-		response.getWriter().write(obj.toString());
+		return obj.toString();
 	}
 	
 	public String getSampleJson() {

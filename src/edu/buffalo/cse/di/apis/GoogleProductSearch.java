@@ -172,12 +172,12 @@ public class GoogleProductSearch extends GoogleSearch {
      * @param data
      * @return 
      */
-    public static List<List<Node>> runAlgorithmforStrings(List<String> data) {
+    public static List<List<Node>> runAlgorithmforStrings(List<String> data, SimilarityType type) {
         List<GoogleProductSearchResult> results = new ArrayList<GoogleProductSearchResult>(data.size());
         for(String item: data) {
             results.add(new GoogleProductSearchResult(item));
         }
-        return runAlgorithm(results);
+        return runAlgorithm(results, type);
     }
 
     /**
@@ -185,7 +185,7 @@ public class GoogleProductSearch extends GoogleSearch {
      * @param data
      * @return 
      */
-    public static List<List<Node>> runAlgorithm(List<GoogleProductSearchResult> data) {
+    public static List<List<Node>> runAlgorithm(List<GoogleProductSearchResult> data, SimilarityType type) {
     	System.out.println("runAlgorithm : " + data.size());
         List<Node> nodes = new ArrayList<Node>();
         for(GoogleProductSearchResult item: data) {
@@ -197,8 +197,8 @@ public class GoogleProductSearch extends GoogleSearch {
         }
         //Stage 1:
         System.out.println(nodes.size());
-        KNNAlgorithm algorithm = new KNNAlgorithm(nodes, 5, 0.15);
-        List<List<Node>> clusters = algorithm.generateClusters(SimilarityType.JACCARD);
+        KNNAlgorithm algorithm = new KNNAlgorithm(nodes, 3, 0.15);
+        List<List<Node>> clusters = algorithm.generateClusters(type);
         System.out.println("Step 1: UnMerged Clusters: " + clusters.size());
 
         List<List<Node>> mergedClusters = getMergedClusters(clusters,0.0);
@@ -291,14 +291,14 @@ public class GoogleProductSearch extends GoogleSearch {
     }
 
     
-    public static List<List<Node>> performEntityResolution(List<String> entities) throws IOException {
+    public static List<List<Node>> performEntityResolution(List<String> entities, SimilarityType type) throws IOException {
         List<String> productTitles = new ArrayList<String>();
         for(String entity : entities) {
             if(!entity.equals("")) {
                 productTitles.add(entity);
             }
         }
-        return runAlgorithmforStrings(productTitles);
+        return runAlgorithmforStrings(productTitles, type);
     }
 
     public static void actualTest(String fileName) throws IOException {
@@ -311,7 +311,7 @@ public class GoogleProductSearch extends GoogleSearch {
             }
         }
         reader.close();
-        runAlgorithmforStrings(productTitles);
+        runAlgorithmforStrings(productTitles, SimilarityType.JACCARD);
     }
 
     /**
@@ -331,7 +331,7 @@ public class GoogleProductSearch extends GoogleSearch {
             }
         }
         reader.close();
-        List<List<Node>> clusters = runAlgorithmforStrings(productTitles);
+        List<List<Node>> clusters = runAlgorithmforStrings(productTitles, SimilarityType.JACCARD);
         //calculateClassificationRate(clusters);
     }
 
